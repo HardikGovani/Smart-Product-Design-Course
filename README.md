@@ -77,4 +77,4 @@ We will use the following software tools during the course:
 Follow these steps to set up your environment:
 1. **Clone this repository**:
    ```bash
-   git clone https://github.com/yourusername/Smart-Product-Design-Course.git
+   git clone https://github.com/HardikGovani/Smart-Product-Design-Course.git
