@@ -35,6 +35,13 @@ We discussed the **10S Framework** to define smartness in products:
 
 ---
 
+## Resources
+
+1. [Arduino Language Reference](https://docs.arduino.cc/language-reference/)
+2. [Canva Presentation: Smartness in Smart Products](https://www.canva.com/design/DAGZvC8GSwE/SifnQp4Xn2HKL2Dp3NDjEQ/view?utm_content=DAGZvC8GSwE&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf0093edd24)
+3. [ESP32 Datasheet](https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf)
+
+
 ## Hands-On: Serial Communication with ESP32
 
 ### **Objective**
