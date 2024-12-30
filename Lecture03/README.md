@@ -10,7 +10,6 @@ Welcome to the third lecture of the **Smart Product Design Course**! This sessio
 ## Resources
 - [Canva Presentation: Lecture 03](https://www.canva.com/design/DAGavY46Wns/mxeMs5W4dUzV68bDgwWm9Q/view?utm_content=DAGavY46Wns&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h5d353b81c5)
 - [DHT11 Library](https://github.com/dhrubasaha08/DHT11/tree/main)
-- [ESP32 Wi-Fi Documentation](https://RandomNerdTutorials.com/esp32-useful-wi-fi-functions-arduino/)
 
 ---
 
@@ -59,6 +58,7 @@ void loop() {
         Serial.println(DHT11::getErrorString(result));
     }
 }
+```
 
 # ESP32 Wi-Fi Modes and Functionalities
 
@@ -77,7 +77,7 @@ The ESP32 supports three Wi-Fi modes:
 WiFi.mode(WIFI_STA);      // Station mode
 WiFi.mode(WIFI_AP);       // Access Point mode
 WiFi.mode(WIFI_AP_STA);   // Station + Access Point mode
-
+```
 # Scan Wi-Fi Networks
 
 Scanning Wi-Fi networks helps to identify available networks and their signal strength. This is useful for debugging connection issues or ensuring your ESP32 is in range of your desired network.
@@ -118,7 +118,7 @@ void setup() {
 void loop() {
     delay(5000); // Re-scan every 5 seconds
 }
-
+```
 # ESP32 Wi-Fi Functionalities
 
 This document provides a comprehensive overview of ESP32 Wi-Fi functionalities, complete with example code snippets for practical applications.
@@ -149,7 +149,7 @@ void setup() {
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
 }
-
+```
 # Additional ESP32 Wi-Fi Functionalities
 
 This section covers additional Wi-Fi functionalities for the ESP32, including checking signal strength, setting a static IP address, and managing Wi-Fi connections.
@@ -163,7 +163,7 @@ You can check the Wi-Fi signal strength (RSSI) using the following command:
 ### Example: Get RSSI
 ```cpp
 Serial.println(WiFi.RSSI());
-
+```
 # Set a Static IP Address for ESP32
 
 You can configure a static IP address for the ESP32 to ensure it always has the same IP address on your network. This is particularly useful for devices that need to be easily accessible without checking dynamically assigned IPs.
@@ -188,7 +188,7 @@ void setup() {
         Serial.println("Failed to configure Static IP");
     }
 }
-
+```
 
 # ESP32 Wi-Fi Functionalities: Disconnect and Reconnect
 
@@ -204,7 +204,7 @@ You can disconnect from the current Wi-Fi network and reconnect using the follow
 ```cpp
 WiFi.disconnect();       // Disconnect from the network
 WiFi.begin(ssid, password); // Reconnect to the network
-
+```
 # ESP32 Wi-Fi Events and Advanced Functionalities
 
 This document provides an overview of ESP32 Wi-Fi events and additional Wi-Fi features for handling dynamic network states and enhancing connectivity management in IoT projects.
@@ -247,7 +247,7 @@ The `WiFiMulti` class allows the ESP32 to manage connections to multiple network
 Modify the ESP32's hostname for easy identification on the network. Use the following command to set a custom hostname:
 ```cpp
 WiFi.setHostname("MyESP32Device");
-
+```
 ## Instructions for Students
 
 ### Bring the Kit
@@ -293,6 +293,3 @@ Ensure you have the following components ready for this lecture:
 - Keep a notebook or digital file to document:
   - Observations from each practical example.
   - Questions or issues encountered during practice.
-
-
-
