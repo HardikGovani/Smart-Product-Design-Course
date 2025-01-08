@@ -1,201 +1,317 @@
-# TinkerCad Circuits - Day 7
+# TinkerCad Circuits - Day 8
 
 ## Overview
-Welcome to Day 7! Today, we will explore advanced sensors and their applications in Arduino-based systems. The sensors and modules covered include:
+Welcome to Day 8! Today, we will work with LCD displays, sensors, and piezo buzzers to build advanced projects using Arduino. The focus will be on:
 
-### Sensors and Modules
-1. **Soil Moisture Sensor**: Measures the moisture content in the soil for applications like auto irrigation.
-2. **PIR Sensor**: Detects motion for security or automation purposes.
-3. **Ultrasonic Sensor**: Measures distance and can be used for object detection.
-4. **LM35 Temperature Sensor**: Measures temperature in Celsius with a linear output.
-5. **Gas Sensor**: Detects the presence of specific gases (e.g., methane, LPG).
-6. **LCD 16x2**: Displays data, such as sensor readings, on a 16x2 character screen.
-7. **Single Seven Segment Display**: Displays numeric values.
-8. **Clock Display**: Real-time clock module for displaying current time.
+- **4-bit LCD (16x2) Interface**
+- **I2C 16x2 LCD Scrolling Display**
+- **Gas Sensor/Air Quality Monitoring**
+- **Force Sensor (FSR)**: Measure force in Newtons and display the value.
+- **Flex Sensor**: Measure bending angle and display the result.
+- **Piezo Buzzer**: Generate different tones, including melody and piano-like sound effects.
 
 ## Practical Exercises
 
-### Practical 1: PIR Sensor with Servo Motor for Door Automation
+### Practical 1: 4-bit 16x2 LCD - "Hello, World!"
 
 #### Objective
-Use a PIR sensor to detect motion and open/close a door using a servo motor.
+Display "Hello, World!" on a 16x2 LCD using a 4-bit interface.
 
 #### Circuit
-1. Connect the PIR sensor's output to digital pin 2.
-2. Connect the servo motor's signal pin to pin 9.
-
-#### Code
-```cpp
-#include <Servo.h>
-
-Servo doorServo;
-int pirPin = 2;
-int motionDetected = 0;
-
-void setup() {
-  pinMode(pirPin, INPUT);
-  doorServo.attach(9);
-  doorServo.write(0); // Door closed position
-}
-
-void loop() {
-  motionDetected = digitalRead(pirPin);
-  if (motionDetected) {
-    doorServo.write(90); // Open the door
-    delay(5000);         // Wait for 5 seconds
-    doorServo.write(0);  // Close the door
-  }
-  delay(200);
-}
-```
-
----
-
-### Practical 2: Soil Moisture Sensor for Auto Irrigation
-
-#### Objective
-Automatically turn a DC pump on or off based on soil moisture levels.
-
-#### Circuit
-1. Connect the soil moisture sensor's output to analog pin A0.
-2. Connect a relay module to control the DC pump, with its signal pin connected to pin 8.
-
-#### Code
-```cpp
-int moisturePin = A0;
-int relayPin = 8;
-int moistureLevel = 0;
-int threshold = 500; // Adjust based on sensor calibration
-
-void setup() {
-  pinMode(relayPin, OUTPUT);
-  Serial.begin(9600);
-}
-
-void loop() {
-  moistureLevel = analogRead(moisturePin);
-  Serial.println(moistureLevel);
-  if (moistureLevel < threshold) {
-    digitalWrite(relayPin, HIGH); // Turn on the pump
-  } else {
-    digitalWrite(relayPin, LOW);  // Turn off the pump
-  }
-  delay(1000);
-}
-```
-
----
-
-### Practical 3: Ultrasonic Sensor with NeoPixel Strip
-
-#### Objective
-Map the distance measured by an ultrasonic sensor to a NeoPixel LED strip.
-
-#### Circuit
-1. Connect the ultrasonic sensor's trigger pin to pin 5 and echo pin to pin 6.
-2. Connect the NeoPixel data pin to pin 7.
-
-#### Code
-```cpp
-#include <Adafruit_NeoPixel.h>
-
-#define TRIG_PIN 5
-#define ECHO_PIN 6
-#define NEOPIXEL_PIN 7
-#define NUM_LEDS 20
-
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
-
-void setup() {
-  pinMode(TRIG_PIN, OUTPUT);
-  pinMode(ECHO_PIN, INPUT);
-  strip.begin();
-  strip.show();
-  Serial.begin(9600);
-}
-
-long measureDistance() {
-  digitalWrite(TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-  return pulseIn(ECHO_PIN, HIGH) * 0.034 / 2; // Convert to cm
-}
-
-void loop() {
-  long distance = measureDistance();
-  int numLeds = map(distance, 0, 100, 0, NUM_LEDS); // Map distance to LEDs
-  strip.clear();
-  for (int i = 0; i < numLeds; i++) {
-    strip.setPixelColor(i, strip.Color(0, 255, 0)); // Green LEDs
-  }
-  strip.show();
-  delay(100);
-}
-```
-
----
-
-### Advanced Practical 1: LM35 Temperature Sensor
-
-#### Objective
-Display temperature readings on an LCD.
-
-#### Circuit
-1. Connect the LM35's output to A0.
-2. Connect the LCD to the Arduino using I2C or regular pin connections.
+1. Connect the 16x2 LCD's data pins (D4-D7) to Arduino pins 7, 8, 9, and 10.
+2. Connect RS to pin 12 and EN to pin 11.
+3. Connect a 10k potentiometer to adjust contrast.
 
 #### Code
 ```cpp
 #include <LiquidCrystal.h>
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-int tempPin = A0;
-float tempC = 0;
+LiquidCrystal lcd(12, 11, 7, 8, 9, 10);
 
 void setup() {
   lcd.begin(16, 2);
-  lcd.print("Temperature:");
+  lcd.print("Hello, World!");
 }
 
 void loop() {
-  int value = analogRead(tempPin);
-  tempC = (value * 5.0 / 1023.0) * 100; // Convert to Celsius
+}
+```
+
+---
+
+### Practical 2: I2C 16x2 LCD - Scrolling Text
+
+#### Objective
+Display scrolling text on a 16x2 LCD using the I2C interface.
+
+#### Circuit
+1. Connect the I2C LCD's SDA and SCL pins to A4 and A5 (or dedicated SDA/SCL pins).
+
+#### Code
+```cpp
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  lcd.begin();
+  lcd.print("Scrolling Text!");
+}
+
+void loop() {
+  for (int position = 0; position < 16; position++) {
+    lcd.scrollDisplayLeft();
+    delay(300);
+  }
+}
+```
+
+---
+
+### Practical 3: Gas Sensor for Air Quality
+
+#### Objective
+Monitor air quality and display the gas sensor readings on an I2C LCD.
+
+#### Circuit
+1. Connect the gas sensor's analog output to A0.
+2. Connect the I2C LCD as described above.
+
+#### Code
+```cpp
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+int gasPin = A0;
+
+void setup() {
+  lcd.begin();
+  lcd.print("Air Quality:");
+}
+
+void loop() {
+  int gasValue = analogRead(gasPin);
+  float ppm = gasValue * (5.0 / 1023.0) * 100; // Convert to ppm (example formula)
+
   lcd.setCursor(0, 1);
-  lcd.print(tempC);
-  lcd.print(" C");
+  lcd.print(ppm);
+  lcd.print(" ppm");
   delay(1000);
 }
 ```
 
 ---
 
-### Advanced Practical 2: Gas Sensor
+### Practical 4: Force Sensor (FSR)
 
 #### Objective
-Trigger an alert when gas levels exceed a threshold.
+Measure force in Newtons using an FSR and display the value on an I2C LCD.
 
 #### Circuit
-1. Connect the gas sensor's analog output to A1.
+1. Connect the FSR's analog output to A1.
 
 #### Code
 ```cpp
-int gasPin = A1;
-int threshold = 300;
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+int fsrPin = A1;
 
 void setup() {
-  Serial.begin(9600);
+  lcd.begin();
+  lcd.print("Force Sensor:");
 }
 
 void loop() {
-  int gasLevel = analogRead(gasPin);
-  Serial.println(gasLevel);
-  if (gasLevel > threshold) {
-    Serial.println("Gas detected!");
-  }
-  delay(500);
+  int fsrValue = analogRead(fsrPin);
+  float force = fsrValue * (5.0 / 1023.0) * 10; // Example formula for Newtons
+
+  lcd.setCursor(0, 1);
+  lcd.print(force);
+  lcd.print(" N");
+  delay(1000);
 }
 ```
+
+---
+
+### Practical 5: Flex Sensor
+
+#### Objective
+Measure the bending angle of a flex sensor and display it on an I2C LCD.
+
+#### Circuit
+1. Connect the flex sensor's analog output to A2.
+
+#### Code
+```cpp
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+int flexPin = A2;
+
+void setup() {
+  lcd.begin();
+  lcd.print("Flex Sensor:");
+}
+
+void loop() {
+  int flexValue = analogRead(flexPin);
+  float angle = map(flexValue, 0, 1023, 0, 180);
+
+  lcd.setCursor(0, 1);
+  lcd.print(angle);
+  lcd.print(" deg");
+  delay(1000);
+}
+```
+
+---
+
+### Practical 6: Piezo Buzzer Melody
+
+#### Objective
+Generate a melody using a piezo buzzer.
+
+# Musical Note Frequencies
+
+This document provides a reference for the frequencies of common musical notes. These frequencies can be used to generate tones with a piezo buzzer in Arduino or other projects.
+
+## Common Note Frequencies
+
+| Note | Frequency (Hz) |
+|------|----------------|
+| C4   | 262            |
+| D4   | 294            |
+| E4   | 330            |
+| F4   | 349            |
+| G4   | 392            |
+| A4   | 440            |
+| B4   | 494            |
+
+## Usage in Arduino
+
+You can use these frequencies with the `tone()` function to play specific musical notes on a piezo buzzer. Example:
+
+```cpp
+int buzzer = 3; // Connect piezo buzzer to pin 3
+
+void setup() {
+}
+
+void loop() {
+  tone(buzzer, 262); // Play note C4
+  delay(500);        // Delay for 500 ms
+  tone(buzzer, 294); // Play note D4
+  delay(500);
+  tone(buzzer, 330); // Play note E4
+  delay(500);
+  noTone(buzzer);    // Stop the buzzer
+}
+```
+
+## Notes
+- These frequencies correspond to the standard Western musical scale.
+- You can combine these notes to create melodies, scales, or sound effects in your projects.
+
+
+#### Circuit
+1. Connect the piezo buzzer to pin 3.
+
+#### Code
+```cpp
+int buzzer = 3;
+
+void setup() {
+}
+
+void loop() {
+  tone(buzzer, 262); // C note
+  delay(500);
+  tone(buzzer, 294); // D note
+  delay(500);
+  tone(buzzer, 330); // E note
+  delay(500);
+  tone(buzzer, 349); // F note
+  delay(500);
+  tone(buzzer, 392); // G note
+  delay(500);
+  noTone(buzzer);
+}
+```
+
+---
+
+### Practical 7: Piezo Buzzer Piano
+
+#### Objective
+Create a mini piano using push buttons and a piezo buzzer.
+
+#### Circuit
+1. Connect 5 push buttons to pins 4, 5, 6, 7, and 8.
+2. Connect the piezo buzzer to pin 3.
+
+#### Code
+```cpp
+int buzzer = 3;
+int buttons[] = {4, 5, 6, 7, 8};
+int notes[] = {262, 294, 330, 349, 392};
+
+void setup() {
+  for (int i = 0; i < 5; i++) {
+    pinMode(buttons[i], INPUT_PULLUP);
+  }
+}
+
+void loop() {
+  for (int i = 0; i < 5; i++) {
+    if (digitalRead(buttons[i]) == LOW) {
+      tone(buzzer, notes[i]);
+    }
+  }
+  noTone(buzzer);
+}
+```
+
+---
+
+## Homework
+
+### Task 1: Combine Practical 3 and 5
+Combine the gas sensor and flex sensor to display both air quality and bending angle on the same I2C LCD.
+
+### Task 2: Advanced Melody
+Modify Practical 6 to play a complete melody like "Happy Birthday."
+
+### Task 3: Force-Based Buzzer Control
+Use the FSR to control the frequency of a piezo buzzer.
+
+### Task 4: Flex Sensor Piano
+Use the flex sensor to adjust the tone of the piezo buzzer dynamically.
+
+---
+
+This repository contains exercises for advanced Arduino projects using sensors and modules:
+
+1. 4-bit LCD Display
+2. I2C 16x2 LCD Scrolling
+3. Gas Sensor for Air Quality Monitoring
+4. Force Sensor (FSR) for Measuring Force
+5. Flex Sensor for Bending Angle Measurement
+6. Piezo Buzzer for Melody Generation
+7. Piezo Buzzer Piano with Buttons
+
+### Files
+- `practical1_4bit_lcd.ino`
+- `practical2_i2c_lcd.ino`
+- `practical3_gas_sensor.ino`
+- `practical4_fsr.ino`
+- `practical5_flex_sensor.ino`
+- `practical6_buzzer_melody.ino`
+- `practical7_buzzer_piano.ino`
 
 ---
